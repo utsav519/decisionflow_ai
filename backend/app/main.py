@@ -89,7 +89,11 @@ def readiness_check() -> dict:
 
 # ------------------------------------------------------------------
 # Router registration
-# Routers are registered here as they are built in subsequent phases.
-# Phase 4 will add: policies, config
-# Phase 5 will add: analytics, audit
 # ------------------------------------------------------------------
+from app.api.v1.policies import router as policies_router
+from app.api.v1.config import router as config_router
+
+app.include_router(policies_router, prefix=settings.api_v1_prefix)
+app.include_router(config_router, prefix=settings.api_v1_prefix)
+
+# Phase 5 will add: analytics, audit

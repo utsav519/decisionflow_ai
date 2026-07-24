@@ -3,9 +3,9 @@
 This document is the single source of truth for development progress. It tracks what has been built across the 6-phase plan defined in `03_BACKEND_MODULE_GUIDE.md`.
 
 ## Current State
-- **Phase**: 3 (Rule Engine)
-- **Status**: Complete
-- **Next Action**: P4.1 — Create API dependencies (`app/api/dependencies.py`)
+- **Phase**: 4 (Policy CRUD)
+- **Status**: In Progress
+- **Next Action**: P4.11 — Create validation service tests (`tests/test_validation_service.py`)
 - **Blockers**: None
 
 ## Phase 1: Foundation (COMPLETED)
@@ -36,28 +36,29 @@ This document is the single source of truth for development progress. It tracks 
 - [x] `app/engine/evaluator.py`
 - [x] `app/engine/resolver.py`
 - [x] `app/engine/confidence.py`
-- [x] `tests/test_operators.py` (46 tests)
-- [x] `tests/test_evaluator.py` (15 tests)
-- [x] `tests/test_resolver.py` (8 tests)
-- [x] `tests/test_confidence.py` (7 tests)
+- [x] `tests/test_operators.py`
+- [x] `tests/test_evaluator.py`
+- [x] `tests/test_resolver.py`
+- [x] `tests/test_confidence.py`
 
-## Phase 4: Policy CRUD (UP NEXT)
-- [ ] `app/api/dependencies.py`
-- [ ] `app/repositories/policy_repository.py`
-- [ ] `app/repositories/policy_version_repository.py`
-- [ ] `app/repositories/audit_repository.py`
-- [ ] `app/services/policy_service.py`
-- [ ] `app/services/validation_service.py`
-- [ ] `app/services/audit_service.py`
-- [ ] `app/api/v1/policies.py`
-- [ ] `app/api/v1/config.py`
-- [ ] `app/db/seed.py`
+## Phase 4: Policy CRUD (IN PROGRESS)
+- [x] `app/api/dependencies.py`
+- [x] `app/repositories/policy_repository.py`
+- [x] `app/repositories/policy_version_repository.py`
+- [x] `app/repositories/audit_repository.py`
+- [x] `app/services/policy_service.py`
+- [x] `app/services/validation_service.py`
+- [x] `app/services/audit_service.py`
+- [x] `app/api/v1/policies.py`
+- [x] `app/api/v1/config.py`
+- [x] `app/db/seed.py`
+- [ ] `tests/test_validation_service.py`
+- [ ] `tests/test_policy_repository.py`
+- [ ] `tests/test_policy_service.py`
+- [ ] `tests/test_policy_api.py`
 
 ## Test Results
 | Component | Passed | Failed | Skipped | Total |
 |---|---|---|---|---|
-| Operators | 46 | 0 | 0 | 46 |
-| Evaluator | 15 | 0 | 0 | 15 |
-| Resolver | 8 | 0 | 0 | 8 |
-| Confidence | 7 | 0 | 0 | 7 |
+| Rule Engine | 76 | 0 | 0 | 76 |
 | **TOTAL** | **76** | **0** | **0** | **76** |
