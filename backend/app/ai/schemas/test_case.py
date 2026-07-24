@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from typing import Literal
-
+from typing import ClassVar
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.ai.schemas.provider import ProviderMetadata
@@ -55,6 +55,7 @@ class TestCaseGenerationResult(BaseModel):
     """
     Result returned by AITestCaseGenerator.
     """
+    __test__: ClassVar[bool] = False
 
     model_config = ConfigDict(
         extra="forbid",
