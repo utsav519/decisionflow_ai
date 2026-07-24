@@ -45,4 +45,6 @@ def get_llm_provider(settings) -> LLMProvider:
     if provider == "groq":
         return GroqProvider(settings)
 
-    raise AIUnsupportedProviderError(provider)
+    raise AIUnsupportedProviderError(
+        f"Unsupported LLM provider: {provider}"
+    )
