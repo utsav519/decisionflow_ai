@@ -1,75 +1,59 @@
-# React + TypeScript + Vite
+# DecisionFlow AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI-assisted configurable decision automation platform demonstrated through
+telecom device-upgrade eligibility and risk decisioning.
 
-Currently, two official plugins are available:
+## Core principle
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+AI assists with policy authoring, validation and explanation.
 
-## React Compiler
+The final business decision is produced by a deterministic rule engine.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Architecture
 
-## Expanding the ESLint configuration
+React
+→ FastAPI
+→ Application Services
+→ Rule Engine and AI Services
+→ MySQL
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Repository branches
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- `main` — stable and demo-ready
+- `feature/backend-rule-engine`
+- `feature/ai-policy-studio`
+- `feature/frontend-dashboard`
+- `feature/integration`
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Current status
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Initial project baseline.
 
-```
+## Backend startup
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+Frontend startup
+cd frontend
+npm install
+npm run dev
+MySQL startup
+docker compose up -d mysql
+docker compose ps
+Local URLs
+Frontend: http://localhost:5173
+Backend: http://localhost:8000
+Swagger: http://localhost:8000/docs
+Health: http://localhost:8000/health
+Readiness: http://localhost:8000/ready
+Documentation
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+See the docs/ directory.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Security
 
-```
+Never commit .env, API keys, access tokens or production credentials.
