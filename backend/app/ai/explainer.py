@@ -45,3 +45,6 @@ class Explainer:
             f"Decision: {decision}\n"
             f"Input Data:\n{input_data}"
         )
+
+# Stable integration-facing alias.
+DecisionExplainer = Explainer

@@ -76,3 +76,6 @@ class PolicyGenerator:
             f"Domain: {request.domain}\n"
             f"Policy:\n{request.policy_text}"
         )
+
+# Stable integration-facing alias.
+AIPolicyGenerator = PolicyGenerator
