@@ -1,59 +1,47 @@
-# DecisionFlow AI
+# DecisionFlow AI — Frontend
 
-AI-assisted configurable decision automation platform demonstrated through
-telecom device-upgrade eligibility and risk decisioning.
+React admin dashboard for the DecisionFlow AI hackathon POC (telecom eligibility decisioning).
 
-## Core principle
-
-AI assists with policy authoring, validation and explanation.
-
-The final business decision is produced by a deterministic rule engine.
-
-## Architecture
-
-React
-→ FastAPI
-→ Application Services
-→ Rule Engine and AI Services
-→ MySQL
-
-## Repository branches
-
-- `main` — stable and demo-ready
-- `feature/backend-rule-engine`
-- `feature/ai-policy-studio`
-- `feature/frontend-dashboard`
-- `feature/integration`
-
-## Current status
-
-Initial project baseline.
-
-## Backend startup
+## Quick start
 
 ```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-Frontend startup
 cd frontend
 npm install
+cp .env.example .env
 npm run dev
-MySQL startup
-docker compose up -d mysql
-docker compose ps
-Local URLs
-Frontend: http://localhost:5173
-Backend: http://localhost:8000
-Swagger: http://localhost:8000/docs
-Health: http://localhost:8000/health
-Readiness: http://localhost:8000/ready
-Documentation
+```
 
-See the docs/ directory.
+Open [http://localhost:5173](http://localhost:5173)
 
-Security
+## Mock mode (default)
 
-Never commit .env, API keys, access tokens or production credentials.
+The app runs with `VITE_USE_MOCK_API=true` — no backend required.
+
+## Real API mode
+
+Set in `.env`:
+
+```text
+VITE_USE_MOCK_API=false
+VITE_API_BASE_URL=http://localhost:8000/api/v1
+VITE_BACKEND_BASE_URL=http://localhost:8000
+```
+
+## Pages
+
+- **Dashboard** — stats, charts, recent activity
+- **AI Policy Studio** — natural-language policy generation
+- **Policies** — list and detail
+- **Decision Center** — customer evaluation with presets
+- **Analytics** — distribution and trends
+- **Audit Logs** — governance trail
+- **Settings** — environment info
+
+## Demo flow
+
+1. Dashboard → overview
+2. AI Policy Studio → generate premium upgrade policy
+3. Save draft → activate
+4. Decision Center → eligible customer → APPROVE
+5. Decision Center → high fraud preset → REJECT
+6. Audit → view records
