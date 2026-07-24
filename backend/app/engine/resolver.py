@@ -128,7 +128,7 @@ def resolve(evaluation: EngineEvaluationResult) -> ResolutionResult:
 
 class PriorityResolver:
     """Wrapper class for integration compatibility."""
-    
+
     @staticmethod
     def resolve(matched_policies: list[PolicyEvaluationResult]) -> ResolutionResult:
         # Create a dummy EngineEvaluationResult with just the matched policies

@@ -41,7 +41,7 @@ cd e:\code\hackathon\decisionflow_ai\backend
 ```powershell
 .venv\Scripts\python -c "
 import httpx, json
-r = httpx.post('http://localhost:8000/api/v1/policies', 
+r = httpx.post('http://localhost:8000/api/v1/policies',
     json={
         'name': 'Lifecycle Test Policy',
         'description': 'Created by lifecycle agent',

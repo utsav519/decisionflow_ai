@@ -129,7 +129,7 @@ def calculate_confidence(
 
 class DecisionConfidenceCalculator:
     """Wrapper class for integration compatibility."""
-    
+
     @staticmethod
     def calculate(
         evaluation: EngineEvaluationResult,

@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-"""FastAPI dependency providers.
-
-Concrete dependencies will be added as backend and AI modules are integrated.
-"""
-
-
-def get_decision_service():
-    raise RuntimeError(
-        "DecisionService is not available until backend and AI modules are integrated."
-    )
-=======
 """
 FastAPI dependency injection providers.
 
@@ -47,4 +35,3 @@ def get_current_user(
     Returns 'demo_user' if no header is present.
     """
     return x_user_id or "demo_user"
->>>>>>> origin/feature/backend-rule-engine
