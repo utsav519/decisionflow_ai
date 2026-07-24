@@ -35,6 +35,11 @@ from app.ai.schemas.policy_generation import (
     AssumptionItem,
 )
 
+from app.ai.schemas.test_case import (
+    GeneratedTestCase,
+    TestCaseGenerationResult,
+)
+
 T = TypeVar("T", bound=BaseModel)
 
 class MockProvider(LLMProvider):
@@ -104,6 +109,9 @@ class MockProvider(LLMProvider):
 
         if response_model is AIPolicyGenerationResult:
             return self._build_policy_result()  # type: ignore[return-value]
+
+        if response_model is TestCaseGenerationResult:
+            return self._build_test_case_result()  # type: ignore[return-value]
 
         raise AIOutputInvalidError(
             f"No mock response registered for {response_model.__name__}."
@@ -241,6 +249,49 @@ class MockProvider(LLMProvider):
                 )
             ],
             suggested_test_cases=[],
+            provider_metadata=self._provider_metadata(),
+        )
+
+    def _build_test_case_result(self) -> TestCaseGenerationResult:
+        return TestCaseGenerationResult(
+            generated_test_cases=[
+                GeneratedTestCase(
+                    name="Eligible Customer",
+                    category="POSITIVE",
+                    input={
+                        "age": 25,
+                        "country": "India",
+                        "income": 60000,
+                    },
+                    expected_match=True,
+                    expected_decision="APPROVED",
+                    rationale="Applicant satisfies all policy conditions.",
+                ),
+                GeneratedTestCase(
+                    name="Underage Applicant",
+                    category="NEGATIVE",
+                    input={
+                        "age": 16,
+                        "country": "India",
+                        "income": 60000,
+                    },
+                    expected_match=False,
+                    expected_decision="REJECTED",
+                    rationale="Applicant does not satisfy the minimum age requirement.",
+                ),
+                GeneratedTestCase(
+                    name="Boundary Age",
+                    category="BOUNDARY",
+                    input={
+                        "age": 18,
+                        "country": "India",
+                        "income": 60000,
+                    },
+                    expected_match=True,
+                    expected_decision="APPROVED",
+                    rationale="Applicant is exactly at the minimum allowed age.",
+                ),
+            ],
             provider_metadata=self._provider_metadata(),
         )
 
