@@ -92,8 +92,12 @@ def readiness_check() -> dict:
 # ------------------------------------------------------------------
 from app.api.v1.policies import router as policies_router
 from app.api.v1.config import router as config_router
+from app.api.v1.evaluations import router as evaluations_router
+from app.api.v1.analytics import router as analytics_router
+from app.api.v1.audit import router as audit_router
 
 app.include_router(policies_router, prefix=settings.api_v1_prefix)
 app.include_router(config_router, prefix=settings.api_v1_prefix)
-
-# Phase 5 will add: analytics, audit
+app.include_router(evaluations_router, prefix=settings.api_v1_prefix)
+app.include_router(analytics_router, prefix=settings.api_v1_prefix)
+app.include_router(audit_router, prefix=settings.api_v1_prefix)
