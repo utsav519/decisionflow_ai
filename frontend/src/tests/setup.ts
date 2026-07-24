@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest'
+import { cleanup } from '@testing-library/react'
 
 class ResizeObserverMock {
   observe() {}
@@ -7,3 +8,7 @@ class ResizeObserverMock {
 }
 
 global.ResizeObserver = ResizeObserverMock
+
+afterEach(() => {
+  cleanup()
+})

@@ -31,7 +31,8 @@ describe('AuditPage', () => {
     const user = userEvent.setup()
     renderWithProviders(<AuditPage />)
 
-    await user.click(screen.getAllByRole('button', { name: /^view$/i })[0]!)
+    const [viewButton] = await screen.findAllByRole('button', { name: /^view$/i })
+    await user.click(viewButton)
 
     expect(await screen.findByText(/audit detail/i)).toBeInTheDocument()
     expect(screen.getByText(/cor_demo001/i)).toBeInTheDocument()
@@ -41,7 +42,8 @@ describe('AuditPage', () => {
     const user = userEvent.setup()
     renderWithProviders(<AuditPage />)
 
-    await user.click(screen.getAllByRole('button', { name: /^view$/i })[0]!)
+    const [viewButton] = await screen.findAllByRole('button', { name: /^view$/i })
+    await user.click(viewButton)
 
     expect(await screen.findByRole('button', { name: /copy id/i })).toBeInTheDocument()
   })
