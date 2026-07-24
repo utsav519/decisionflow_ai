@@ -1,7 +1,9 @@
 services:
   mysql:
     image: mysql:8.0
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     container_name: decisionflow-mysql
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: decisionflow
       MYSQL_USER: decisionflow
@@ -13,19 +15,30 @@ services:
     volumes:
       - decisionflow_mysql_data:/var/lib/mysql
     healthcheck:
-      test:
-        [
-          "CMD",
-          "mysqladmin",
-          "ping",
-          "-h",
-          "localhost",
-          "-uroot",
-          "-proot"
-        ]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 5s
       timeout: 5s
       retries: 20
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: decisionflow-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: decisionflow
+      MYSQL_USER: decisionflow
+      MYSQL_PASSWORD: decisionflow
+      APP_ENV: production
+      LOG_LEVEL: info
+      UVICORN_WORKERS: 2
+    ports:
+      - "8000:8000"
 volumes:
   decisionflow_mysql_data:
