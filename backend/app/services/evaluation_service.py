@@ -43,6 +43,9 @@ class EvaluationService:
         options: dict[str, Any] | None = None,
         performed_by: str = "api",
         correlation_id: str | None = None,
+        request_id: str | None = None,
+        write_audit: bool = True,
+        commit: bool = True,
     ) -> dict[str, Any]:
         """Execute the full evaluation pipeline.
 
@@ -54,7 +57,7 @@ class EvaluationService:
         6. Return structured response.
         """
         correlation_id = correlation_id or new_correlation_id()
-        request_id = new_correlation_id()  # unique per request
+        request_id = request_id or new_correlation_id()
         start_time = time.perf_counter()
 
         # 1. Fetch active policies
@@ -86,7 +89,11 @@ class EvaluationService:
         confidence_dict = {
             "score": confidence_result.score,
             "factors": [
-                {"name": f.name, "impact": f.impact, "reason": f.reason}
+                {
+                    "name": f.name,
+                    "impact": f.impact,
+                    "description": f.description,
+                }
                 for f in confidence_result.factors
             ],
         }
@@ -145,31 +152,33 @@ class EvaluationService:
 
         self.eval_repo.create_rule_results(eval_record.id, all_policy_results)
 
-        # Audit log
-        self.audit_repo.create({
-            "action": "EVALUATION_EXECUTED",
-            "entity_type": "EVALUATION",
-            "entity_id": eval_record.id,
-            "performed_by": performed_by,
-            "summary": (
-                f"Evaluation {eval_record.id}: decision={resolution_result.decision} "
-                f"confidence={confidence_result.score} "
-                f"winning_policy={resolution_result.winning_policy_id}"
-            ),
-            "request_snapshot": {
-                "domain": domain,
-                "customer_id": customer_id,
-                "data_keys": list(data.keys()),
-            },
-            "result_snapshot": {
-                "decision": resolution_result.decision,
-                "confidence": confidence_result.score,
-                "winning_policy_id": resolution_result.winning_policy_id,
-            },
-            "correlation_id": correlation_id,
-        })
+        if write_audit:
+            self.audit_repo.create({
+                "action": "EVALUATION_EXECUTED",
+                "entity_type": "EVALUATION",
+                "entity_id": eval_record.id,
+                "performed_by": performed_by,
+                "summary": (
+                    f"Evaluation {eval_record.id}: "
+                    f"decision={resolution_result.decision} "
+                    f"confidence={confidence_result.score} "
+                    f"winning_policy={resolution_result.winning_policy_id}"
+                ),
+                "request_snapshot": {
+                    "domain": domain,
+                    "customer_id": customer_id,
+                    "data_keys": list(data.keys()),
+                },
+                "result_snapshot": {
+                    "decision": resolution_result.decision,
+                    "confidence": confidence_result.score,
+                    "winning_policy_id": resolution_result.winning_policy_id,
+                },
+                "correlation_id": correlation_id,
+            })
 
-        self.db.commit()
+        if commit:
+            self.db.commit()
 
         # 7. Return response
         return {
@@ -181,8 +190,11 @@ class EvaluationService:
             "winning_policy_id": resolution_result.winning_policy_id,
             "winning_policy_version": resolution_result.winning_policy_version,
             "resolution": resolution_dict,
+            "domain": domain,
+            "customer_id": customer_id,
             "metrics": metrics_dict,
             "warnings": evaluation_result.warnings,
+            "rule_results": all_policy_results,
             "evaluated_at": eval_record.evaluated_at.isoformat(),
             "correlation_id": correlation_id,
         }
