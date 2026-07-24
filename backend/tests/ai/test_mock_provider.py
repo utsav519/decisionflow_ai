@@ -11,6 +11,8 @@ from app.ai.schemas.explanation import ExplanationResult
 
 from app.ai.schemas.ambiguity import AmbiguityDetectionResult
 
+from app.ai.schemas.conflict import ConflictAnalysisResult
+
 
 def test_provider_name():
     provider = MockProvider(settings=None)
@@ -86,3 +88,16 @@ def test_generate_ambiguity():
     assert result.has_ambiguity is True
     assert len(result.findings) == 2
     assert result.findings[0].severity == "HIGH"
+
+def test_generate_conflict():
+    provider = MockProvider(settings=None)
+
+    result = provider.generate_structured(
+        "Analyze conflict",
+        ConflictAnalysisResult,
+    )
+
+    assert isinstance(result, ConflictAnalysisResult)
+    assert result.has_conflict is True
+    assert len(result.conflicting_policies) == 2
+    assert result.recommended_winner == "P001"

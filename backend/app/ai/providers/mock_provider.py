@@ -19,6 +19,12 @@ from app.ai.schemas.ambiguity import (
     ClarificationQuestion,
 )
 
+from app.ai.schemas.conflict import (
+    ConflictAnalysisResult,
+    ConflictReason,
+    ConflictingPolicy,
+)
+
 T = TypeVar("T", bound=BaseModel)
 
 class MockProvider(LLMProvider):
@@ -82,6 +88,9 @@ class MockProvider(LLMProvider):
 
         if response_model is AmbiguityDetectionResult:
             return self._build_ambiguity_result()  # type: ignore[return-value]
+
+        if response_model is ConflictAnalysisResult:
+            return self._build_conflict_result()  # type: ignore[return-value]
 
         raise AIOutputInvalidError(
             f"No mock response registered for {response_model.__name__}."
@@ -147,6 +156,34 @@ class MockProvider(LLMProvider):
                     ),
                 ),
             ],
+            provider_metadata=self._provider_metadata(),
+        )
+
+    def _build_conflict_result(self) -> ConflictAnalysisResult:
+        return ConflictAnalysisResult(
+            has_conflict=True,
+            conflicting_policies=[
+                ConflictingPolicy(
+                    policy_id="P001",
+                    policy_name="Reject High Risk",
+                    priority=100,
+                    decision="REJECT",
+                ),
+                ConflictingPolicy(
+                    policy_id="P002",
+                    policy_name="Approve Premium Customer",
+                    priority=50,
+                    decision="APPROVE",
+                ),
+            ],
+            reasons=[
+                ConflictReason(
+                    description="Both policies match the same applicant.",
+                    severity="HIGH",
+                ),
+            ],
+            recommended_winner="P001",
+            explanation="The higher priority policy wins according to the conflict resolution strategy.",
             provider_metadata=self._provider_metadata(),
         )
 
