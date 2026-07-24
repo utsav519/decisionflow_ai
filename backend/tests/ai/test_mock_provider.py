@@ -9,6 +9,8 @@ from app.ai.providers.mock_provider import MockProvider
 
 from app.ai.schemas.explanation import ExplanationResult
 
+from app.ai.schemas.ambiguity import AmbiguityDetectionResult
+
 
 def test_provider_name():
     provider = MockProvider(settings=None)
@@ -71,3 +73,16 @@ def test_generate_explanation():
     assert result.generated_by == "AI"
     assert result.fallback_used is False
     assert len(result.key_factors) == 3
+
+def test_generate_ambiguity():
+    provider = MockProvider(settings=None)
+
+    result = provider.generate_structured(
+        "Find ambiguities",
+        AmbiguityDetectionResult,
+    )
+
+    assert isinstance(result, AmbiguityDetectionResult)
+    assert result.has_ambiguity is True
+    assert len(result.findings) == 2
+    assert result.findings[0].severity == "HIGH"

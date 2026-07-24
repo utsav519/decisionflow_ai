@@ -13,6 +13,11 @@ from app.ai.exceptions import (
     AIProviderUnavailableError,
 )
 from app.ai.providers.base import LLMProvider
+from app.ai.schemas.ambiguity import (
+    AmbiguityDetectionResult,
+    AmbiguityFinding,
+    ClarificationQuestion,
+)
 
 T = TypeVar("T", bound=BaseModel)
 
@@ -75,6 +80,9 @@ class MockProvider(LLMProvider):
         if response_model is ExplanationResult:
             return self._build_explanation_result()  # type: ignore[return-value]
 
+        if response_model is AmbiguityDetectionResult:
+            return self._build_ambiguity_result()  # type: ignore[return-value]
+
         raise AIOutputInvalidError(
             f"No mock response registered for {response_model.__name__}."
         )
@@ -114,6 +122,31 @@ class MockProvider(LLMProvider):
             competing_policy_note=None,
             generated_by="AI",
             fallback_used=False,
+            provider_metadata=self._provider_metadata(),
+        )
+    def _build_ambiguity_result(self) -> AmbiguityDetectionResult:
+        return AmbiguityDetectionResult(
+            has_ambiguity=True,
+            findings=[
+                AmbiguityFinding(
+                    field="credit_score",
+                    severity="HIGH",
+                    explanation="The policy does not specify whether the minimum credit score is inclusive.",
+                    clarification=ClarificationQuestion(
+                        question="Should applicants with a credit score of exactly 750 be approved?",
+                        reason="Boundary condition is not clearly defined.",
+                    ),
+                ),
+                AmbiguityFinding(
+                    field="fraud_risk_score",
+                    severity="MEDIUM",
+                    explanation="Maximum fraud risk threshold is not mentioned.",
+                    clarification=ClarificationQuestion(
+                        question="What is the maximum acceptable fraud risk score?",
+                        reason="Approval criteria are incomplete.",
+                    ),
+                ),
+            ],
             provider_metadata=self._provider_metadata(),
         )
 
