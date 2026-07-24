@@ -124,3 +124,19 @@ def resolve(evaluation: EngineEvaluationResult) -> ResolutionResult:
         tie_breaker_used=tie_breaker_used,
         competing_policy_ids=competing_ids,
     )
+
+
+class PriorityResolver:
+    """Wrapper class for integration compatibility."""
+    
+    @staticmethod
+    def resolve(matched_policies: list[PolicyEvaluationResult]) -> ResolutionResult:
+        # Create a dummy EngineEvaluationResult with just the matched policies
+        dummy_evaluation = EngineEvaluationResult(
+            matched=matched_policies,
+            unmatched=[],
+            skipped=[],
+            evaluation_time_ms=0.0,
+            warnings=[]
+        )
+        return resolve(dummy_evaluation)

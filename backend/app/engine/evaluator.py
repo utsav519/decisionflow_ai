@@ -279,3 +279,11 @@ def evaluate_policies(
         evaluation_time_ms=round(elapsed_ms, 2),
         warnings=warnings,
     )
+
+
+class RuleEngine:
+    """Wrapper class for integration compatibility."""
+    
+    @staticmethod
+    def evaluate(request_data: dict[str, Any], policies: list[dict[str, Any]]) -> EngineEvaluationResult:
+        return evaluate_policies(policies, request_data)

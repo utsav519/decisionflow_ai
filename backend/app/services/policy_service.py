@@ -136,6 +136,11 @@ class PolicyService:
             },
         }
 
+    def get_active_policies(self, domain: str) -> list[dict[str, Any]]:
+        """Get all active policies for a specific domain."""
+        policies = self.policy_repo.get_active_by_domain(domain)
+        return [self._policy_to_dict(p) for p in policies]
+
     # ─── UPDATE ───────────────────────────────────────
 
     def update_policy(

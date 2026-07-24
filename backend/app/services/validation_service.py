@@ -128,9 +128,10 @@ def _validate_condition(
             allowed_values=list(OPERATOR_REGISTRY.keys()),
         )
 
-    # Validate field exists in domain catalogue (warning only if domain is known)
+    # Validate field exists in domain catalogue
     if field and known_fields and field not in known_fields:
-        result.add_warning(
-            f"Field '{field}' at {path} is not in the '{field}' domain catalogue. "
-            "It may still work if present in the input data."
+        result.add_error(
+            f"{path}.field",
+            f"Field '{field}' is not in the domain catalogue.",
+            received=field
         )

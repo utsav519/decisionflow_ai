@@ -32,3 +32,67 @@ def get_dashboard(
         "data": dashboard,
         "correlation_id": correlation_id,
     }
+
+
+@router.get("/summary")
+def get_summary(
+    response: Response,
+    domain: str | None = None,
+    db: Session = Depends(get_db),
+    correlation_id: str = Depends(get_correlation_id),
+) -> dict:
+    service = AnalyticsService(db)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return {
+        "success": True,
+        "data": service.get_summary(domain),
+        "correlation_id": correlation_id,
+    }
+
+
+@router.get("/decision-distribution")
+def get_decision_distribution(
+    response: Response,
+    domain: str | None = None,
+    db: Session = Depends(get_db),
+    correlation_id: str = Depends(get_correlation_id),
+) -> dict:
+    service = AnalyticsService(db)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return {
+        "success": True,
+        "data": service.get_decision_distribution(domain),
+        "correlation_id": correlation_id,
+    }
+
+
+@router.get("/decision-trend")
+def get_decision_trend(
+    response: Response,
+    domain: str | None = None,
+    db: Session = Depends(get_db),
+    correlation_id: str = Depends(get_correlation_id),
+) -> dict:
+    service = AnalyticsService(db)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return {
+        "success": True,
+        "data": service.get_decision_trend(domain),
+        "correlation_id": correlation_id,
+    }
+
+
+@router.get("/top-policies")
+def get_top_policies(
+    response: Response,
+    domain: str | None = None,
+    db: Session = Depends(get_db),
+    correlation_id: str = Depends(get_correlation_id),
+) -> dict:
+    service = AnalyticsService(db)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return {
+        "success": True,
+        "data": service.get_top_policies(domain),
+        "correlation_id": correlation_id,
+    }

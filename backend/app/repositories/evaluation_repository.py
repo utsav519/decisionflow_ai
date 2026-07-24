@@ -29,6 +29,10 @@ class EvaluationRepository:
 
     # ─── Evaluations ──────────────────────────────────
 
+    def save(self, data: dict[str, Any]) -> Evaluation:
+        """Alias for create_evaluation to satisfy integration handoff."""
+        return self.create_evaluation(data)
+
     def create_evaluation(self, data: dict[str, Any]) -> Evaluation:
         """Insert a new evaluation record."""
         evaluation = Evaluation(

@@ -125,3 +125,14 @@ def calculate_confidence(
     final_score = max(0, min(100, score))
 
     return DecisionConfidenceResult(score=final_score, factors=factors)
+
+
+class DecisionConfidenceCalculator:
+    """Wrapper class for integration compatibility."""
+    
+    @staticmethod
+    def calculate(
+        evaluation: EngineEvaluationResult,
+        resolution: ResolutionResult,
+    ) -> DecisionConfidenceResult:
+        return calculate_confidence(evaluation, resolution)

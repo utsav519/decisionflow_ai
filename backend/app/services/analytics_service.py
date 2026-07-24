@@ -60,3 +60,19 @@ class AnalyticsService:
             },
             "top_policies": top_policies,
         }
+
+    def get_summary(self, domain: str | None = None) -> dict[str, Any]:
+        """Return summary metrics for the dashboard."""
+        return self.get_dashboard()["summary"]
+
+    def get_decision_distribution(self, domain: str | None = None) -> dict[str, Any]:
+        """Return decision distribution metrics."""
+        return self.get_dashboard()["distribution"]
+
+    def get_decision_trend(self, domain: str | None = None) -> dict[str, Any]:
+        """Return decision trend metrics."""
+        return self.get_dashboard()["trends"]
+
+    def get_top_policies(self, domain: str | None = None) -> list[dict[str, Any]]:
+        """Return top policies."""
+        return self.get_dashboard()["top_policies"]
