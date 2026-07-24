@@ -20,18 +20,18 @@ import { TELECOM_FIELDS } from '@/utils/constants'
 const schema = z.object({
   policy_text: z.string().min(10, 'Enter a more detailed policy.').max(5000),
   domain: z.literal('telecom'),
-  preferred_decision: z
-    .union([z.enum(['APPROVE', 'REJECT', 'MANUAL_REVIEW']), z.literal('')])
-    .transform((value) => (value === '' ? undefined : value))
-    .optional(),
+  preferred_decision: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.enum(['APPROVE', 'REJECT', 'MANUAL_REVIEW']).optional(),
+  ),
   preferred_priority: z.preprocess(
     (value) => (value === '' || Number.isNaN(Number(value)) ? undefined : Number(value)),
     z.number().int().min(1).max(1000).optional(),
   ),
   generate_test_cases: z.boolean(),
 })
-
-type FormValues = z.infer<typeof schema>
+type FormInput = z.input<typeof schema>
+type FormValues = z.output<typeof schema>
 
 export function PolicyStudioPage() {
   const navigate = useNavigate()
@@ -45,7 +45,7 @@ export function PolicyStudioPage() {
   const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<'visual' | 'json' | 'tests'>('visual')
 
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormInput, any, FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       policy_text: '',

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import axios, { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
+import { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import type { ApiFailure, ApiSuccess } from '@/types/api'
 import { apiClient, mockDelay, normalizeError, unwrap } from '@/services/apiClient'
