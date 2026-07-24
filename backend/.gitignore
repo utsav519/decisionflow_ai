@@ -23,6 +23,8 @@ ENV/
 dist/
 build/
 
+skills/
+
 # Testing
 .pytest_cache/
 htmlcov/
