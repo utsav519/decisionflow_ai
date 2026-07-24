@@ -1,3 +1,5 @@
+import pytest
+
 from app.ai.policy_generator import PolicyGenerator
 from app.ai.providers.mock_provider import MockProvider
 from app.ai.schemas.policy_generation import (
@@ -6,7 +8,8 @@ from app.ai.schemas.policy_generation import (
 )
 
 
-def test_generate_policy():
+@pytest.mark.asyncio
+async def test_generate_policy():
     provider = MockProvider(settings=None)
     generator = PolicyGenerator(provider)
 
@@ -15,7 +18,7 @@ def test_generate_policy():
         domain="Loan",
     )
 
-    result = generator.generate(request)
+    result = await generator.generate(request)
 
     assert isinstance(result, AIPolicyGenerationResult)
     assert result.generated_policy.policy_name == "Approve Premium Customer"

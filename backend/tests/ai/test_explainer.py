@@ -1,13 +1,16 @@
+import pytest
+
 from app.ai.explainer import Explainer
 from app.ai.providers.mock_provider import MockProvider
 from app.ai.schemas.explanation import ExplanationResult
 
 
-def test_generate_explanation():
+@pytest.mark.asyncio
+async def test_generate_explanation():
     provider = MockProvider(settings=None)
     explainer = Explainer(provider)
 
-    result = explainer.explain(
+    result = await explainer.explain(
         policy_name="Approve Premium Customer",
         decision="APPROVE",
         input_data="credit_score=780, fraud_risk=10",

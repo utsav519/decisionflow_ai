@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.ai.providers.base import LLMProvider
 from app.ai.schemas.ambiguity import AmbiguityDetectionResult
+from app.ai.prompts.ambiguity_detection import SYSTEM_PROMPT
 
 
 class AmbiguityDetector:
@@ -12,14 +13,16 @@ class AmbiguityDetector:
     def __init__(self, provider: LLMProvider):
         self._provider = provider
 
-    def analyze(
+    async def analyze(
         self,
         policy_text: str,
     ) -> AmbiguityDetectionResult:
-        prompt = self._build_prompt(policy_text)
 
-        return self._provider.generate_structured(
-            prompt=prompt,
+        user_prompt = self._build_prompt(policy_text)
+
+        return await self._provider.generate_structured(
+            system_prompt=SYSTEM_PROMPT,
+            user_prompt=user_prompt,
             response_model=AmbiguityDetectionResult,
         )
 

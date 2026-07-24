@@ -12,7 +12,9 @@ from app.ai.exceptions import (
     AIProviderTimeoutError,
     AIProviderUnavailableError,
 )
+
 from app.ai.providers.base import LLMProvider
+
 from app.ai.schemas.ambiguity import (
     AmbiguityDetectionResult,
     AmbiguityFinding,
@@ -31,7 +33,6 @@ from app.ai.schemas.policy_generation import (
     GeneratedConditionGroup,
     GeneratedCondition,
     AIWarning,
-    AmbiguityItem,
     AssumptionItem,
 )
 
@@ -41,6 +42,7 @@ from app.ai.schemas.test_case import (
 )
 
 T = TypeVar("T", bound=BaseModel)
+
 
 class MockProvider(LLMProvider):
     """
@@ -85,16 +87,18 @@ class MockProvider(LLMProvider):
                 "Mock provider timed out."
             )
 
-    def generate_structured(
+    async def generate_structured(
         self,
-        prompt: str,
+        *,
+        system_prompt: str,
+        user_prompt: str,
         response_model: Type[T],
+        temperature: float | None = None,
+        max_output_tokens: int | None = None,
+        timeout_seconds: int | None = None,
     ) -> T:
         """
         Return a deterministic structured response.
-
-        Currently, no schemas are registered. This will be implemented
-        in the next step.
         """
         self._check_simulation()
 
@@ -117,9 +121,14 @@ class MockProvider(LLMProvider):
             f"No mock response registered for {response_model.__name__}."
         )
 
-    def generate_text(
+    async def generate_text(
         self,
-        prompt: str,
+        *,
+        system_prompt: str,
+        user_prompt: str,
+        temperature: float | None = None,
+        max_output_tokens: int | None = None,
+        timeout_seconds: int | None = None,
     ) -> str:
         """
         Return a deterministic text response.
@@ -154,6 +163,7 @@ class MockProvider(LLMProvider):
             fallback_used=False,
             provider_metadata=self._provider_metadata(),
         )
+
     def _build_ambiguity_result(self) -> AmbiguityDetectionResult:
         return AmbiguityDetectionResult(
             has_ambiguity=True,
@@ -294,4 +304,3 @@ class MockProvider(LLMProvider):
             ],
             provider_metadata=self._provider_metadata(),
         )
-

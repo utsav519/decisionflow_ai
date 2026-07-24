@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.ai.providers.base import LLMProvider
 from app.ai.schemas.conflict import ConflictAnalysisResult
+from app.ai.prompts.conflict_explanation import SYSTEM_PROMPT
 
 
 class ConflictAssistant:
@@ -12,18 +13,20 @@ class ConflictAssistant:
     def __init__(self, provider: LLMProvider):
         self._provider = provider
 
-    def analyze(
+    async def analyze(
         self,
         policy_a: str,
         policy_b: str,
     ) -> ConflictAnalysisResult:
-        prompt = self._build_prompt(
+
+        user_prompt = self._build_prompt(
             policy_a,
             policy_b,
         )
 
-        return self._provider.generate_structured(
-            prompt=prompt,
+        return await self._provider.generate_structured(
+            system_prompt=SYSTEM_PROMPT,
+            user_prompt=user_prompt,
             response_model=ConflictAnalysisResult,
         )
 

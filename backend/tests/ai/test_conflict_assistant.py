@@ -1,14 +1,17 @@
+import pytest
+
 from app.ai.conflict_assistant import ConflictAssistant
 from app.ai.providers.mock_provider import MockProvider
 from app.ai.schemas.conflict import ConflictAnalysisResult
 
 
-def test_conflict_analysis():
+@pytest.mark.asyncio
+async def test_conflict_analysis():
     assistant = ConflictAssistant(
         MockProvider(settings=None)
     )
 
-    result = assistant.analyze(
+    result = await assistant.analyze(
         "Approve",
         "Reject",
     )

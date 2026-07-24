@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from app.ai.providers.base import LLMProvider
 from app.ai.schemas.explanation import ExplanationResult
+from app.ai.prompts.decision_explanation import SYSTEM_PROMPT
 
 
 class Explainer:
@@ -12,23 +13,22 @@ class Explainer:
     def __init__(self, provider: LLMProvider):
         self._provider = provider
 
-    def explain(
+    async def explain(
         self,
         policy_name: str,
         decision: str,
         input_data: str,
     ) -> ExplanationResult:
-        """
-        Generate an explanation for the supplied policy decision.
-        """
-        prompt = self._build_prompt(
+
+        user_prompt = self._build_prompt(
             policy_name=policy_name,
             decision=decision,
             input_data=input_data,
         )
 
-        return self._provider.generate_structured(
-            prompt=prompt,
+        return await self._provider.generate_structured(
+            system_prompt=SYSTEM_PROMPT,
+            user_prompt=user_prompt,
             response_model=ExplanationResult,
         )
 

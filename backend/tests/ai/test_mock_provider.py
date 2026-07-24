@@ -8,11 +8,8 @@ from app.ai.exceptions import (
 from app.ai.providers.mock_provider import MockProvider
 
 from app.ai.schemas.explanation import ExplanationResult
-
 from app.ai.schemas.ambiguity import AmbiguityDetectionResult
-
 from app.ai.schemas.conflict import ConflictAnalysisResult
-
 from app.ai.schemas.policy_generation import (
     AIPolicyGenerationResult,
 )
@@ -30,49 +27,66 @@ def test_model_name():
     assert provider.model_name == "mock-v1"
 
 
-def test_generate_text():
+@pytest.mark.asyncio
+async def test_generate_text():
     provider = MockProvider(settings=None)
 
-    text = provider.generate_text("hello")
+    text = await provider.generate_text(
+        system_prompt="You are an AI assistant.",
+        user_prompt="hello",
+    )
 
     assert text == "MockProvider deterministic response."
 
 
-def test_timeout():
+@pytest.mark.asyncio
+async def test_timeout():
     provider = MockProvider(
         settings=None,
         simulate_timeout=True,
     )
 
     with pytest.raises(AIProviderTimeoutError):
-        provider.generate_text("hello")
+        await provider.generate_text(
+            system_prompt="system",
+            user_prompt="hello",
+        )
 
 
-def test_failure():
+@pytest.mark.asyncio
+async def test_failure():
     provider = MockProvider(
         settings=None,
         simulate_failure=True,
     )
 
     with pytest.raises(AIProviderUnavailableError):
-        provider.generate_text("hello")
+        await provider.generate_text(
+            system_prompt="system",
+            user_prompt="hello",
+        )
 
 
-def test_unknown_schema():
+@pytest.mark.asyncio
+async def test_unknown_schema():
     provider = MockProvider(settings=None)
 
     with pytest.raises(AIOutputInvalidError):
-        provider.generate_structured(
-            "prompt",
-            dict,
+        await provider.generate_structured(
+            system_prompt="system",
+            user_prompt="prompt",
+            response_model=dict,
         )
 
-def test_generate_explanation():
+
+@pytest.mark.asyncio
+async def test_generate_explanation():
     provider = MockProvider(settings=None)
 
-    result = provider.generate_structured(
-        "Explain decision",
-        ExplanationResult,
+    result = await provider.generate_structured(
+        system_prompt="system",
+        user_prompt="Explain decision",
+        response_model=ExplanationResult,
     )
 
     assert isinstance(result, ExplanationResult)
@@ -80,12 +94,15 @@ def test_generate_explanation():
     assert result.fallback_used is False
     assert len(result.key_factors) == 3
 
-def test_generate_ambiguity():
+
+@pytest.mark.asyncio
+async def test_generate_ambiguity():
     provider = MockProvider(settings=None)
 
-    result = provider.generate_structured(
-        "Find ambiguities",
-        AmbiguityDetectionResult,
+    result = await provider.generate_structured(
+        system_prompt="system",
+        user_prompt="Find ambiguities",
+        response_model=AmbiguityDetectionResult,
     )
 
     assert isinstance(result, AmbiguityDetectionResult)
@@ -93,12 +110,15 @@ def test_generate_ambiguity():
     assert len(result.findings) == 2
     assert result.findings[0].severity == "HIGH"
 
-def test_generate_conflict():
+
+@pytest.mark.asyncio
+async def test_generate_conflict():
     provider = MockProvider(settings=None)
 
-    result = provider.generate_structured(
-        "Analyze conflict",
-        ConflictAnalysisResult,
+    result = await provider.generate_structured(
+        system_prompt="system",
+        user_prompt="Analyze conflict",
+        response_model=ConflictAnalysisResult,
     )
 
     assert isinstance(result, ConflictAnalysisResult)
@@ -106,12 +126,15 @@ def test_generate_conflict():
     assert len(result.conflicting_policies) == 2
     assert result.recommended_winner == "P001"
 
-def test_generate_policy():
+
+@pytest.mark.asyncio
+async def test_generate_policy():
     provider = MockProvider(settings=None)
 
-    result = provider.generate_structured(
-        "Generate policy",
-        AIPolicyGenerationResult,
+    result = await provider.generate_structured(
+        system_prompt="system",
+        user_prompt="Generate policy",
+        response_model=AIPolicyGenerationResult,
     )
 
     assert isinstance(result, AIPolicyGenerationResult)

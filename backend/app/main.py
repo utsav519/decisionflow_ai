@@ -5,6 +5,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.system import router as system_router
 
+from app.api.v1.ai import router as ai_router
+
 app = FastAPI(
     title="DecisionFlow AI API",
     version="0.1.0",
@@ -36,3 +38,5 @@ async def correlation_id_middleware(request: Request, call_next):
 
 
 app.include_router(system_router)
+app.include_router(system_router)
+app.include_router(ai_router)
