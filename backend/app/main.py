@@ -15,6 +15,7 @@ from app.core.error_handlers import register_error_handlers
 from app.core.logging import setup_logging
 from app.db.init_db import check_database_health
 from app.db.session import SessionLocal
+from app.api.v1.ai import router as ai_router
 
 settings = get_settings()
 setup_logging(settings.log_level)
@@ -109,3 +110,4 @@ app.include_router(config_router, prefix=settings.api_v1_prefix)
 app.include_router(evaluations_router, prefix=settings.api_v1_prefix)
 app.include_router(analytics_router, prefix=settings.api_v1_prefix)
 app.include_router(audit_router, prefix=settings.api_v1_prefix)
+app.include_router(ai_router)

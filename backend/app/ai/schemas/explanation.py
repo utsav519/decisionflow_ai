@@ -9,7 +9,7 @@ from app.ai.schemas.provider import ProviderMetadata
 
 class ExplanationResult(BaseModel):
     """
-    Structured explanation returned by the DecisionExplainer.
+    Structured explanation returned by the Explainer.
 
     This model is used for:
     - Business explanation

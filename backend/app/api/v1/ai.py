@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.ai.ambiguity_detector import AmbiguityDetector
 from app.ai.conflict_assistant import ConflictAssistant
-from app.ai.explainer import DecisionExplainer
+from app.ai.explainer import Explainer
 from app.ai.providers.factory import get_llm_provider
 from app.ai.test_case_generator import AITestCaseGenerator
 
