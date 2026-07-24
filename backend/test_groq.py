@@ -5,7 +5,7 @@ from app.core.config import settings
 client = Groq(api_key=settings.GROQ_API_KEY)
 
 response = client.chat.completions.create(
-    model=settings.LLM_MODEL,
+    model=settings.GROQ_MODEL,
     messages=[
         {
             "role": "user",

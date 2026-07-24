@@ -4,6 +4,9 @@ from app.ai.exceptions import AIUnsupportedProviderError
 from app.ai.providers.base import LLMProvider
 from app.ai.providers.mock_provider import MockProvider
 from app.ai.providers.groq_provider import GroqProvider
+from app.ai.providers.openai_provider import OpenAIProvider
+from app.ai.providers.gemini_provider import GeminiProvider
+from app.ai.providers.anthropic_provider import AnthropicProvider
 
 # These providers will be implemented later.
 # Keep imports here so the factory remains the single
