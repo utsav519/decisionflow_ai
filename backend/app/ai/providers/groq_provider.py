@@ -31,7 +31,7 @@ class GroqProvider(LLMProvider):
 
     @property
     def model_name(self) -> str:
-        return self._settings.LLM_MODEL
+        return self._settings.GROQ_MODEL
 
     async def generate_text(
         self,

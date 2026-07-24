@@ -30,14 +30,14 @@ def get_llm_provider(settings) -> LLMProvider:
 
     # Uncomment as implementations become available.
 
-    # if provider == "openai":
-    #     return OpenAIProvider(settings)
+    if provider == "openai":
+        return OpenAIProvider(settings)
 
-    # if provider == "gemini":
-    #     return GeminiProvider(settings)
+    if provider == "gemini":
+        return GeminiProvider(settings)
 
-    # if provider == "anthropic":
-    #     return AnthropicProvider(settings)
+    if provider == "anthropic":
+        return AnthropicProvider(settings)
 
     if provider == "groq":
         return GroqProvider(settings)

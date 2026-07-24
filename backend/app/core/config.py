@@ -24,9 +24,28 @@ class Settings(BaseSettings):
         description="Configured LLM provider.",
     )
 
-    LLM_MODEL: str = Field(
+# ------------------------------------------------------------------
+# Provider Models
+# ------------------------------------------------------------------
+
+    GROQ_MODEL: str = Field(
         default="llama-3.3-70b-versatile",
-        description="Model name to use.",
+        description="Groq model name.",
+    )
+
+    OPENAI_MODEL: str = Field(
+        default="gpt-4.1-mini",
+        description="OpenAI model name.",
+    )
+
+    GEMINI_MODEL: str = Field(
+        default="gemini-2.5-flash",
+        description="Gemini model name.",
+    )
+
+    ANTHROPIC_MODEL: str = Field(
+        default="claude-sonnet-4-20250514",
+        description="Anthropic model name.",
     )
 
     LLM_TEMPERATURE: float = Field(
