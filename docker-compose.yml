@@ -18,5 +18,26 @@ services:
       timeout: 5s
       retries: 20
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: decisionflow-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: decisionflow
+      MYSQL_USER: decisionflow
+      MYSQL_PASSWORD: decisionflow
+      APP_ENV: production
+      LOG_LEVEL: info
+      UVICORN_WORKERS: 2
+    ports:
+      - "8000:8000"
+
 volumes:
   decisionflow_mysql_data:

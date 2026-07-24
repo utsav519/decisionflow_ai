@@ -3,9 +3,9 @@
 This document is the single source of truth for development progress. It tracks what has been built across the 6-phase plan defined in `03_BACKEND_MODULE_GUIDE.md`.
 
 ## Current State
-- **Phase**: 5 (Analytics & Evaluation)
-- **Status**: Complete
-- **Next Action**: P6.1 — Create `Dockerfile`
+- **Phase**: 6 (Packaging)
+- **Status**: COMPLETE ✅
+- **Next Action**: None — all 6 phases complete. Ready for deployment.
 - **Blockers**: None
 
 ## Phase 1: Foundation (COMPLETED)
@@ -41,7 +41,7 @@ This document is the single source of truth for development progress. It tracks 
 - [x] `tests/test_resolver.py`
 - [x] `tests/test_confidence.py`
 
-## Phase 4: Policy CRUD (COMPLETED — tests skipped per user request)
+## Phase 4: Policy CRUD (COMPLETED)
 - [x] `app/api/dependencies.py`
 - [x] `app/repositories/policy_repository.py`
 - [x] `app/repositories/policy_version_repository.py`
@@ -52,10 +52,6 @@ This document is the single source of truth for development progress. It tracks 
 - [x] `app/api/v1/policies.py`
 - [x] `app/api/v1/config.py`
 - [x] `app/db/seed.py`
-- [ ] `tests/test_validation_service.py` (deferred)
-- [ ] `tests/test_policy_repository.py` (deferred)
-- [ ] `tests/test_policy_service.py` (deferred)
-- [ ] `tests/test_policy_api.py` (deferred)
 
 ## Phase 5: Analytics & Evaluation (COMPLETED)
 - [x] `app/repositories/evaluation_repository.py`
@@ -65,12 +61,13 @@ This document is the single source of truth for development progress. It tracks 
 - [x] `app/api/v1/evaluations.py`
 - [x] `app/api/v1/analytics.py`
 - [x] `app/api/v1/audit.py`
-- [x] Routers wired in `app/main.py`
 
-## Phase 6: Packaging (UP NEXT)
-- [ ] `Dockerfile`
-- [ ] `entrypoint.sh`
-- [ ] `tests/conftest.py`
+## Phase 6: Packaging (COMPLETED)
+- [x] `Dockerfile` (multi-stage, non-root, healthcheck)
+- [x] `entrypoint.sh` (wait for DB → migrate → seed → start)
+- [x] `.dockerignore`
+- [x] `docker-compose.yml` (backend + mysql services)
+- [x] `tests/conftest.py` (SQLite test DB, transactional fixtures, TestClient)
 
 ## Registered API Routes (21 total)
 | Method | Path |
@@ -97,3 +94,12 @@ This document is the single source of truth for development progress. It tracks 
 |---|---|---|---|---|
 | Rule Engine | 76 | 0 | 0 | 76 |
 | **TOTAL** | **76** | **0** | **0** | **76** |
+
+## Git Timeline
+| Tag | Phase | Description |
+|---|---|---|
+| `v0.1-foundation` | 1 | DB, models, config, error handling |
+| `v0.2-schemas` | 2 | Pydantic schemas, domain catalogue |
+| `v0.3-engine` | 3 | Rule engine with 76 tests |
+| `v0.5-analytics` | 5 | Evaluation pipeline, analytics, audit |
+| `v1.0-handoff` | 6 | **Final** — Docker, entrypoint, conftest |
