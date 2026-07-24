@@ -13,6 +13,10 @@ from app.ai.schemas.ambiguity import AmbiguityDetectionResult
 
 from app.ai.schemas.conflict import ConflictAnalysisResult
 
+from app.ai.schemas.policy_generation import (
+    AIPolicyGenerationResult,
+)
+
 
 def test_provider_name():
     provider = MockProvider(settings=None)
@@ -101,3 +105,17 @@ def test_generate_conflict():
     assert result.has_conflict is True
     assert len(result.conflicting_policies) == 2
     assert result.recommended_winner == "P001"
+
+def test_generate_policy():
+    provider = MockProvider(settings=None)
+
+    result = provider.generate_structured(
+        "Generate policy",
+        AIPolicyGenerationResult,
+    )
+
+    assert isinstance(result, AIPolicyGenerationResult)
+    assert result.validation_status == "VALID"
+    assert result.ai_confidence > 0.9
+    assert result.generated_policy.policy_name == "Approve Premium Customer"
+    assert len(result.generated_policy.condition_group.conditions) == 3

@@ -25,6 +25,16 @@ from app.ai.schemas.conflict import (
     ConflictingPolicy,
 )
 
+from app.ai.schemas.policy_generation import (
+    AIPolicyGenerationResult,
+    GeneratedPolicy,
+    GeneratedConditionGroup,
+    GeneratedCondition,
+    AIWarning,
+    AmbiguityItem,
+    AssumptionItem,
+)
+
 T = TypeVar("T", bound=BaseModel)
 
 class MockProvider(LLMProvider):
@@ -91,6 +101,9 @@ class MockProvider(LLMProvider):
 
         if response_model is ConflictAnalysisResult:
             return self._build_conflict_result()  # type: ignore[return-value]
+
+        if response_model is AIPolicyGenerationResult:
+            return self._build_policy_result()  # type: ignore[return-value]
 
         raise AIOutputInvalidError(
             f"No mock response registered for {response_model.__name__}."
@@ -184,6 +197,50 @@ class MockProvider(LLMProvider):
             ],
             recommended_winner="P001",
             explanation="The higher priority policy wins according to the conflict resolution strategy.",
+            provider_metadata=self._provider_metadata(),
+        )
+
+    def _build_policy_result(self) -> AIPolicyGenerationResult:
+        return AIPolicyGenerationResult(
+            generated_policy=GeneratedPolicy(
+                policy_name="Approve Premium Customer",
+                priority=100,
+                decision="APPROVE",
+                condition_group=GeneratedConditionGroup(
+                    logical_operator="AND",
+                    conditions=[
+                        GeneratedCondition(
+                            field="credit_score",
+                            operator=">=",
+                            value=750,
+                        ),
+                        GeneratedCondition(
+                            field="fraud_risk_score",
+                            operator="<=",
+                            value=20,
+                        ),
+                        GeneratedCondition(
+                            field="income_verified",
+                            operator="==",
+                            value=True,
+                        ),
+                    ],
+                ),
+            ),
+            ai_confidence=0.96,
+            validation_status="VALID",
+            warnings=[
+                AIWarning(
+                    message="Policy generated successfully."
+                )
+            ],
+            ambiguities=[],
+            assumptions=[
+                AssumptionItem(
+                    description="Income verification data is available."
+                )
+            ],
+            suggested_test_cases=[],
             provider_metadata=self._provider_metadata(),
         )
 
