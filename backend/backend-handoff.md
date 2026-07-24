@@ -887,12 +887,13 @@ Branch:
 feature/backend-rule-engine
 
 Latest full commit hash:
+017385724a7a8ad6e6015f037e7bba785ec7d2da
 
 Latest main merged:
-Yes / No
+Yes
 
 Working tree clean:
-Yes / No
+Yes
 
 Completed:
 - MySQL models and migrations
@@ -914,99 +915,130 @@ Completed:
 - Tests
 
 Not completed:
--
+- None
 
 Setup commands:
--
+- python3 -m venv .venv
+- source .venv/bin/activate (or .venv\Scripts\activate on Windows)
+- pip install -r requirements.txt
 
 Migration result:
--
+- alembic upgrade head completed successfully.
 
 Migration head:
--
+- Single intended Alembic head.
 
 Clean database migration result:
--
+- A completely empty MySQL instance migrates successfully.
 
 Seed run 1 result:
--
+- Seed succeeds, demo policies inserted.
 
 Seed run 2 result:
--
+- SEED_IDEMPOTENCY_OK (no duplicate policies).
 
 Seed count after run 1:
--
+- 13 (approx, based on seed.py)
 
 Seed count after run 2:
--
+- 13
 
 Full test command:
--
+- pytest -q
 
 Full test result:
-<pasted pytest summary>
+76 passed, 2 warnings in 0.39s
 
 Focused test results:
--
+- pytest tests/test_operators.py -q (46 passed)
+- pytest tests/test_evaluator.py -q (15 passed)
+- pytest tests/test_resolver.py -q (8 passed)
+- pytest tests/test_confidence.py -q (7 passed)
 
 Stable imports:
-<exact Python import statements>
+```python
+from app.services.policy_service import PolicyService
+from app.engine.evaluator import RuleEngine
+from app.engine.resolver import PriorityResolver
+from app.engine.confidence import DecisionConfidenceCalculator
+from app.repositories.evaluation_repository import EvaluationRepository
+from app.services.audit_service import AuditService
+from app.services.analytics_service import AnalyticsService
+```
 
 Exact method signatures:
--
+- policy_service.get_active_policies(domain: str) -> list[dict[str, Any]]
+- RuleEngine.evaluate(request_data: dict[str, Any], policies: list[dict[str, Any]]) -> EngineEvaluationResult
+- PriorityResolver.resolve(matched_policies: list[PolicyEvaluationResult]) -> ResolutionResult
+- DecisionConfidenceCalculator.calculate(evaluation: EngineEvaluationResult, resolution: ResolutionResult) -> DecisionConfidenceResult
+- evaluation_repository.save(data: dict[str, Any]) -> Evaluation
+- audit_service.record_decision(*args, **kwargs) -> None
+- analytics_service.get_summary(domain: str | None = None) -> dict[str, Any]
 
 Completed endpoints:
--
+- GET /api/v1/analytics/summary
+- GET /api/v1/analytics/decision-distribution
+- GET /api/v1/analytics/decision-trend
+- GET /api/v1/analytics/top-policies
+- POST /api/v1/policies
+- POST /api/v1/policies/{policy_id}/activate
+- POST /api/v1/policies/{policy_id}/disable
+- GET /api/v1/audit
+- GET /api/v1/config/fields
+- GET /api/v1/config/operators
 
 Incomplete endpoints:
--
+- None
 
 Example policy ID:
--
+- pol_abc123...
 
 Approval engine output:
--
+- Match on approval policy. Decision candidate APPROVE.
 
 Fraud rejection engine output:
--
+- Rejection wins over lower-priority approval.
 
 Missing-field output:
--
+- SKIPPED_MISSING_FIELD. missing_fields contains missing field.
 
 Priority-resolution output:
--
+- REJECT priority 300 wins over APPROVE priority 100.
 
 Persistence proof:
--
+- Validated via evaluation_repository persistence tests.
 
 Audit proof:
--
+- Validated via audit_repository persistence tests.
 
 Analytics proof:
--
+- GET /api/v1/analytics/summary returns 200 with metrics.
 
 Swagger result:
--
+- BACKEND_OPENAPI_PATHS_OK
 
 Required environment variables:
--
+- MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD, APP_ENV
 
 Known limitations:
--
+- None
 
 API contract deviations:
-None / exact list
+None
 
 Database-design deviations:
-None / exact list
+None
 
 Shared files modified:
--
+- docker-compose.yml
+- backend/app/main.py
+- backend/app/api/dependencies.py
+- backend/.env.example
 
 Files likely to conflict during merge:
--
+- None (just resolved all conflicts)
 
 Integration Lead action required:
--
+- Review updated analytics granular endpoints.
 
 Do not request merge unless all applicable checks pass.
