@@ -9,6 +9,7 @@ services:
       MYSQL_USER: decisionflow
       MYSQL_PASSWORD: decisionflow
       MYSQL_ROOT_PASSWORD: root
+      TZ: UTC
     ports:
       - "3306:3306"
     volumes:
@@ -39,6 +40,5 @@ services:
       UVICORN_WORKERS: 2
     ports:
       - "8000:8000"
-
 volumes:
   decisionflow_mysql_data:

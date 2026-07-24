@@ -2,15 +2,12 @@
 FastAPI application entry point.
 
 Registers routers, error handlers, and database startup.
-The integration lead is the final owner of application wiring;
-the backend engineer registers only backend-owned routers.
-
-Spec reference: §5 Repository Ownership (main.py notes)
 """
 
 import logging
+from uuid import uuid4
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import get_settings
@@ -20,31 +17,36 @@ from app.db.init_db import check_database_health
 from app.db.session import SessionLocal
 
 settings = get_settings()
-
-# Configure logging before app creation
 setup_logging(settings.log_level)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title=settings.app_name,
+    title="DecisionFlow AI API",
     version="1.0.0",
+    description="AI-assisted configurable decision automation platform.",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
 )
 
-# CORS for frontend development
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Correlation-ID"],
 )
 
-# Register global error handlers
-register_error_handlers(app)
+@app.middleware("http")
+async def correlation_id_middleware(request: Request, call_next):
+    correlation_id = request.headers.get("X-Correlation-ID") or f"cor_{uuid4().hex}"
+    request.state.correlation_id = correlation_id
+    response = await call_next(request)
+    response.headers["X-Correlation-ID"] = correlation_id
+    return response
 
+register_error_handlers(app)
 
 @app.on_event("startup")
 def startup_event() -> None:
@@ -60,18 +62,13 @@ def startup_event() -> None:
     finally:
         db.close()
 
-
 @app.get("/health")
 def health_check() -> dict:
-    """Basic health check endpoint."""
     return {"status": "ok", "app": settings.app_name}
-
 
 @app.get("/ready")
 def readiness_check() -> dict:
-    """Readiness check with dependency status."""
     from app.db.init_db import get_database_info
-
     db = SessionLocal()
     try:
         db_info = get_database_info(db)
@@ -86,15 +83,17 @@ def readiness_check() -> dict:
     finally:
         db.close()
 
-
-# ------------------------------------------------------------------
-# Router registration
-# ------------------------------------------------------------------
 from app.api.v1.policies import router as policies_router
 from app.api.v1.config import router as config_router
 from app.api.v1.evaluations import router as evaluations_router
 from app.api.v1.analytics import router as analytics_router
 from app.api.v1.audit import router as audit_router
+
+try:
+    from app.api.v1.system import router as system_router
+    app.include_router(system_router)
+except ImportError:
+    pass
 
 app.include_router(policies_router, prefix=settings.api_v1_prefix)
 app.include_router(config_router, prefix=settings.api_v1_prefix)
