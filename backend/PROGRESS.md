@@ -3,9 +3,9 @@
 This document is the single source of truth for development progress. It tracks what has been built across the 6-phase plan defined in `03_BACKEND_MODULE_GUIDE.md`.
 
 ## Current State
-- **Phase**: 1 (Foundation)
+- **Phase**: 2 (Schemas)
 - **Status**: Complete
-- **Next Action**: P2.1 — Create common response and error schemas (`app/schemas/common.py`)
+- **Next Action**: P3.1 — Create operator functions (`app/engine/operators.py`)
 - **Blockers**: None
 
 ## Phase 1: Foundation (COMPLETED)
@@ -21,13 +21,25 @@ This document is the single source of truth for development progress. It tracks 
 - [x] P1.10 `alembic` initialized and first migration applied
 - [x] P1.11 `docker-compose.yml`
 
-## Phase 2: Schemas (UP NEXT)
-- [ ] `app/schemas/common.py`
-- [ ] `app/schemas/policy.py`
-- [ ] `app/schemas/evaluation.py`
-- [ ] `app/schemas/analytics.py`
-- [ ] `app/schemas/audit.py`
-- [ ] `app/core/domain_catalogue.py`
+## Phase 2: Schemas (COMPLETED)
+- [x] `app/schemas/common.py`
+- [x] `app/schemas/policy.py`
+- [x] `app/schemas/evaluation.py`
+- [x] `app/schemas/analytics.py`
+- [x] `app/schemas/audit.py`
+- [x] `app/core/domain_catalogue.py`
+
+## Phase 3: Rule Engine (UP NEXT)
+- [ ] `app/engine/operators.py`
+- [ ] `app/engine/evaluator.py`
+- [ ] `app/engine/resolver.py`
+- [ ] `app/engine/confidence.py`
+- [ ] `app/engine/result_models.py`
+- [ ] `app/engine/exceptions.py`
+- [ ] `tests/test_operators.py`
+- [ ] `tests/test_evaluator.py`
+- [ ] `tests/test_resolver.py`
+- [ ] `tests/test_confidence.py`
 
 ## Test Results
 | Component | Passed | Failed | Skipped | Total |
