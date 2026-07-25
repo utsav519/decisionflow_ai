@@ -22,9 +22,77 @@ class AuditService:
     def __init__(self, db: Session) -> None:
         self.repo = AuditRepository(db)
 
-    def record_decision(self, *args, **kwargs) -> None:
-        """Alias to satisfy integration handoff signature check."""
-        pass
+    def record_decision(
+        self,
+        *,
+        evaluation: dict[str, Any],
+        actor_id: str,
+        correlation_id: str,
+    ) -> None:
+        """Record a completed deterministic decision evaluation."""
+        winning_policy = evaluation.get("winning_policy")
+        explanation = evaluation.get("explanation") or {}
+
+        self.repo.create({
+            "action": "DECISION_EVALUATED",
+            "entity_type": "EVALUATION",
+            "entity_id": evaluation["evaluation_id"],
+            "performed_by": actor_id,
+            "summary": (
+                f"Decision {evaluation['evaluation_id']}: "
+                f"outcome={evaluation['decision']} "
+                f"confidence={evaluation['decision_confidence']}"
+            ),
+            "request_snapshot": {
+                "request_id": evaluation["request_id"],
+                "domain": evaluation.get("domain"),
+                "customer_id": evaluation.get("customer_id"),
+            },
+            "result_snapshot": {
+                "decision": evaluation["decision"],
+                "decision_confidence": (
+                    evaluation["decision_confidence"]
+                ),
+                "winning_policy_id": (
+                    winning_policy.get("id")
+                    if winning_policy
+                    else None
+                ),
+                "generated_by": explanation.get("generated_by"),
+                "fallback_used": explanation.get(
+                    "fallback_used",
+                    False,
+                ),
+            },
+            "metadata": {
+                "warnings": evaluation.get("warnings", []),
+                "metrics": evaluation.get("metrics", {}),
+            },
+            "correlation_id": correlation_id,
+        })
+
+    def record_ai_explanation_failed(
+        self,
+        *,
+        evaluation_id: str,
+        actor_id: str,
+        correlation_id: str,
+    ) -> None:
+        """Record non-fatal AI explanation failure."""
+        self.repo.create({
+            "action": "AI_EXPLANATION_FAILED",
+            "entity_type": "EVALUATION",
+            "entity_id": evaluation_id,
+            "performed_by": actor_id,
+            "summary": (
+                "AI explanation was unavailable; "
+                "deterministic fallback was used."
+            ),
+            "metadata": {
+                "fallback_used": True,
+            },
+            "correlation_id": correlation_id,
+        })
 
     def log_policy_created(
         self,

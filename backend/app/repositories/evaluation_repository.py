@@ -83,6 +83,26 @@ class EvaluationRepository:
         self.db.flush()
         return records
 
+    def update_explanation(
+        self,
+        evaluation_id: str,
+        explanation: dict[str, Any] | None,
+        warnings: list[Any] | None = None,
+    ) -> Evaluation | None:
+        """Update explanation and warnings for a stored evaluation."""
+        evaluation = self.get_evaluation_by_id(evaluation_id)
+
+        if evaluation is None:
+            return None
+
+        evaluation.explanation_json = explanation
+
+        if warnings is not None:
+            evaluation.warnings_json = warnings
+
+        self.db.flush()
+        return evaluation
+
     def get_evaluation_by_id(self, eval_id: str) -> Evaluation | None:
         """Fetch a single evaluation."""
         return self.db.query(Evaluation).filter(Evaluation.id == eval_id).first()
