@@ -9,6 +9,7 @@ import { AppShell } from '@/components/layout/AppShell'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { DecisionCenterPage } from '@/pages/DecisionCenterPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
+import { PoliciesPage } from '@/pages/PoliciesPage'
 
 export function AppRouter() {
   return (
@@ -32,12 +33,7 @@ export function AppRouter() {
 
           <Route
             path="policies"
-            element={
-              <PlaceholderPage
-                title="Policies"
-                description="View and manage policy versions, priorities, lifecycle status and activation."
-              />
-            }
+            element={<PoliciesPage />}
           />
 
           <Route
