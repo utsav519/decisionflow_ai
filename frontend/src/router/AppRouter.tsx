@@ -10,6 +10,7 @@ import { DashboardPage } from '@/pages/DashboardPage'
 import { DecisionCenterPage } from '@/pages/DecisionCenterPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
 import { PoliciesPage } from '@/pages/PoliciesPage'
+import { PolicyDetailPage } from '@/pages/PolicyDetailPage'
 
 export function AppRouter() {
   return (
@@ -38,12 +39,7 @@ export function AppRouter() {
 
           <Route
             path="policies/:policyId"
-            element={
-              <PlaceholderPage
-                title="Policy Details"
-                description="Review a policy definition, conditions, versions and lifecycle controls."
-              />
-            }
+            element={<PolicyDetailPage />}
           />
 
           <Route
