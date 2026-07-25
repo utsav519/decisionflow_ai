@@ -12,6 +12,12 @@ def build_fallback_explanation(
     """
 
     decision = evaluation_result.get("decision", "MANUAL_REVIEW")
+
+    decision_text = {
+        "APPROVE": "approved",
+        "REJECT": "rejected",
+        "MANUAL_REVIEW": "sent for manual review",
+    }.get(decision, str(decision).lower())
     winning_policy = evaluation_result.get("winning_policy")
     missing_fields = evaluation_result.get("missing_fields", [])
     matched_policies = evaluation_result.get("matched_policies", [])
@@ -30,7 +36,7 @@ def build_fallback_explanation(
         policy_name = winning_policy.get("name", "Unknown Policy")
 
         summary = (
-            f'The request was {decision} because policy "{policy_name}" '
+            f'The request was {decision_text} because policy "{policy_name}" '
             "matched and had the highest priority."
         )
 
