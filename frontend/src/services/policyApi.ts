@@ -8,6 +8,7 @@ import type {
 } from '@/types/api'
 import type {
   Policy,
+  PolicyCreateInput,
   PolicyDecision,
   PolicyListItem,
   PolicyListResult,
@@ -69,6 +70,17 @@ export async function listPolicies(
         response.data.data.length,
       ),
   }
+}
+
+export function createPolicy(
+  payload: PolicyCreateInput,
+): Promise<Policy> {
+  return unwrap(
+    apiClient.post(
+      '/policies',
+      payload,
+    ),
+  )
 }
 
 export function getPolicy(

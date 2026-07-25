@@ -71,3 +71,15 @@ export interface PolicyListResult {
   items: PolicyListItem[]
   pagination: PaginationMeta
 }
+
+export interface PolicyCreateInput {
+  name: string
+  description?: string | null
+  domain: string
+  priority: number
+  decision: PolicyDecision
+  conditions: PolicyConditionGroup
+  reason?: string | null
+  source?: PolicySource
+  ai_metadata?: PolicyAiMetadata | null
+}
