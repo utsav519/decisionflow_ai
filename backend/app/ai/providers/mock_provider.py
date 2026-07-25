@@ -103,7 +103,9 @@ class MockProvider(LLMProvider):
         self._check_simulation()
 
         if response_model is ExplanationResult:
-            return self._build_explanation_result()  # type: ignore[return-value]
+            return self._build_explanation_result(
+                user_prompt
+            )  # type: ignore[return-value]
 
         if response_model is AmbiguityDetectionResult:
             return self._build_ambiguity_result()  # type: ignore[return-value]
@@ -149,15 +151,58 @@ class MockProvider(LLMProvider):
             estimated_cost=0.0,
         )
 
-    def _build_explanation_result(self) -> ExplanationResult:
+    def _build_explanation_result(
+        self,
+        user_prompt: str,
+    ) -> ExplanationResult:
+        """Return a deterministic explanation matching the final decision."""
+        policy_name = "Unknown policy"
+        decision = "MANUAL_REVIEW"
+
+        for line in user_prompt.splitlines():
+            stripped = line.strip()
+
+            if stripped.startswith("Policy:"):
+                policy_name = stripped.split(":", 1)[1].strip()
+            elif stripped.startswith("Decision:"):
+                decision = (
+                    stripped.split(":", 1)[1]
+                    .strip()
+                    .upper()
+                )
+
+        if decision == "APPROVE":
+            summary = (
+                f'Loan approved because policy "{policy_name}" '
+                "was the winning deterministic policy."
+            )
+        elif decision == "REJECT":
+            summary = (
+                f'The request was rejected because policy "{policy_name}" '
+                "was the winning deterministic policy."
+            )
+        elif decision == "MANUAL_REVIEW":
+            summary = (
+                "The request requires manual review because the "
+                "deterministic engine did not produce an approval "
+                "or rejection outcome."
+            )
+        else:
+            summary = (
+                f"The deterministic decision was {decision}."
+            )
+
         return ExplanationResult(
-            summary="Loan approved because the applicant satisfies all policy conditions.",
+            summary=summary,
             key_factors=[
-                "Credit score exceeds minimum threshold.",
-                "Fraud risk is acceptable.",
-                "Income verification succeeded.",
+                f"Winning deterministic policy: {policy_name}",
+                f"Final deterministic decision: {decision}",
+                "Priority-based deterministic resolution was applied.",
             ],
-            winning_policy_reason="Highest priority matching policy was selected.",
+            winning_policy_reason=(
+                f'Policy "{policy_name}" was selected by the '
+                "deterministic resolver."
+            ),
             competing_policy_note=None,
             generated_by="AI",
             fallback_used=False,

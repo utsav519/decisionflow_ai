@@ -39,6 +39,23 @@ class ExplanationService:
     ) -> ExplanationOutcome:
         fallback = build_fallback_explanation(evidence)
 
+        winning_policy = evidence.get("winning_policy") or {}
+        decision = str(
+            evidence.get("decision", "MANUAL_REVIEW")
+        )
+        missing_fields = evidence.get("missing_fields") or []
+
+        # Do not ask AI to fill gaps in incomplete deterministic evidence.
+        if (
+            not winning_policy
+            or missing_fields
+            or decision == "MANUAL_REVIEW"
+        ):
+            return ExplanationOutcome(
+                explanation=fallback,
+                warnings=[],
+            )
+
         if self._explainer is None:
             return ExplanationOutcome(
                 explanation=fallback,
@@ -53,9 +70,10 @@ class ExplanationService:
                 ],
             )
 
-        winning_policy = evidence.get("winning_policy") or {}
-        policy_name = winning_policy.get("name", "No matching policy")
-        decision = str(evidence.get("decision", "MANUAL_REVIEW"))
+        policy_name = winning_policy.get(
+            "name",
+            "No matching policy",
+        )
 
         try:
             explanation = await self._explainer.explain(

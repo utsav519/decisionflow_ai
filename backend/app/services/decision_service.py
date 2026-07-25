@@ -61,14 +61,10 @@ class DecisionService:
             or f"anonymous:{request.request_id}"
         )
 
-        # Support both the current flat policy catalogue and future
-        # dot-notation fields such as customer.credit_score.
-        engine_data: dict[str, Any] = {
-            **customer_data,
-            **context_data,
-            "customer": customer_data,
-            "context": context_data,
-        }
+        engine_data = self._build_engine_data(
+            customer_data=customer_data,
+            context_data=context_data,
+        )
 
         try:
             deterministic_result = self._evaluation_service.evaluate(
@@ -478,6 +474,49 @@ class DecisionService:
         ]
 
         return items, total
+
+    @staticmethod
+    def _build_engine_data(
+        *,
+        customer_data: dict[str, Any],
+        context_data: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Map public API fields to deterministic catalogue paths.
+
+        The public contract remains authoritative. Compatibility aliases are
+        added only to the internal engine payload.
+        """
+        engine_customer = dict(customer_data)
+
+        tenure = customer_data.get("customer_tenure_months")
+        if tenure is not None:
+            engine_customer["tenure_months"] = tenure
+
+        defaults = customer_data.get("payment_defaults")
+        if defaults is not None:
+            engine_customer["payment_history_defaults"] = defaults
+
+        segment = customer_data.get("customer_segment")
+        if segment:
+            engine_customer["plan_type"] = segment.strip().lower()
+
+        account: dict[str, Any] = {}
+
+        balance = customer_data.get("outstanding_balance")
+        if balance is not None:
+            account["outstanding_balance"] = balance
+
+        account_status = customer_data.get("account_status")
+        if account_status:
+            account["status"] = account_status.strip().lower()
+
+        return {
+            **customer_data,
+            **context_data,
+            "customer": engine_customer,
+            "account": account,
+            "context": dict(context_data),
+        }
 
     @staticmethod
     def _build_policy_results(

@@ -34,6 +34,7 @@ class CustomerData(BaseModel):
     monthly_bill_amount: float | None = Field(default=None, ge=0)
     requested_device_price: float | None = Field(default=None, ge=0)
     outstanding_balance: float | None = Field(default=None, ge=0)
+    account_status: str | None = Field(default=None, max_length=100)
 
     customer_segment: str | None = Field(default=None, max_length=100)
     current_plan: str | None = Field(default=None, max_length=200)
