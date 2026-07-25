@@ -5,6 +5,7 @@ Registers routers, error handlers, and database startup.
 """
 
 import logging
+from contextlib import asynccontextmanager
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
@@ -21,6 +22,31 @@ settings = get_settings()
 setup_logging(settings.log_level)
 logger = logging.getLogger(__name__)
 
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    """Verify database connectivity during application startup."""
+    logger.info(
+        "Starting %s (%s)",
+        settings.app_name,
+        settings.app_env,
+    )
+
+    db = SessionLocal()
+
+    try:
+        healthy = check_database_health(db)
+
+        if healthy:
+            logger.info("Database connection: healthy")
+        else:
+            logger.error("Database connection: unhealthy")
+    finally:
+        db.close()
+
+    yield
+
+
 app = FastAPI(
     title="DecisionFlow AI API",
     version="1.0.0",
@@ -28,6 +54,7 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_url="/openapi.json",
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -48,20 +75,6 @@ async def correlation_id_middleware(request: Request, call_next):
     return response
 
 register_error_handlers(app)
-
-@app.on_event("startup")
-def startup_event() -> None:
-    """Verify database connectivity on startup."""
-    logger.info("Starting %s (%s)", settings.app_name, settings.app_env)
-    db = SessionLocal()
-    try:
-        healthy = check_database_health(db)
-        if healthy:
-            logger.info("Database connection: healthy")
-        else:
-            logger.error("Database connection: unhealthy")
-    finally:
-        db.close()
 
 @app.get("/health")
 def health_check() -> dict:
