@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-
+from app.api.v1.decisions import router as decisions_router
 from app.core.config import get_settings
 from app.core.error_handlers import register_error_handlers
 from app.core.logging import setup_logging
@@ -111,3 +111,4 @@ app.include_router(evaluations_router, prefix=settings.api_v1_prefix)
 app.include_router(analytics_router, prefix=settings.api_v1_prefix)
 app.include_router(audit_router, prefix=settings.api_v1_prefix)
 app.include_router(ai_router)
+app.include_router(decisions_router)
