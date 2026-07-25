@@ -1,15 +1,13 @@
+import type { ApiSuccess } from './api'
+
 export type DecisionOutcome =
   | 'APPROVE'
   | 'REJECT'
   | 'MANUAL_REVIEW'
   | 'NO_MATCH'
 
-export interface StandardResponse<T> {
-  success: boolean
-  data: T
-  meta?: Record<string, unknown> | null
-  correlation_id: string
-}
+export type StandardResponse<T> =
+  ApiSuccess<T>
 
 export interface DecisionCustomer {
   customer_id?: string
