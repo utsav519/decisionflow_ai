@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom'
 
 import { AppShell } from '@/components/layout/AppShell'
+import { DashboardPage } from '@/pages/DashboardPage'
 import { DecisionCenterPage } from '@/pages/DecisionCenterPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
 
@@ -16,12 +17,7 @@ export function AppRouter() {
         <Route element={<AppShell />}>
           <Route
             index
-            element={
-              <PlaceholderPage
-                title="Dashboard"
-                description="Operational decision summary, distribution, trends and top-policy metrics."
-              />
-            }
+            element={<DashboardPage />}
           />
 
           <Route
