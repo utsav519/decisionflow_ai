@@ -112,12 +112,6 @@ from app.api.v1.evaluations import router as evaluations_router
 from app.api.v1.analytics import router as analytics_router
 from app.api.v1.audit import router as audit_router
 
-try:
-    from app.api.v1.system import router as system_router
-    app.include_router(system_router)
-except ImportError:
-    pass
-
 app.include_router(policies_router, prefix=settings.api_v1_prefix)
 app.include_router(config_router, prefix=settings.api_v1_prefix)
 app.include_router(evaluations_router, prefix=settings.api_v1_prefix)
